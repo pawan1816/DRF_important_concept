@@ -1,0 +1,3 @@
+
+
+The simplest way to filter  the querryset of any view that subclasses  GenericAPIView is to overridding  tht .get_queryset() method.

@@ -1,0 +1,123 @@
+fir we have to makemigation to use the rest_framework.authtoken and migrate those
+
+1st way to create the auth token is by simply form the admin panel
+
+
+2nd way to create the auth token is by command terminal, as follows command
+
+for create a token from the terminal
+
+
+python manage.py drf_create_token <user_name>  or
+python3 manage.py drf_create_token <user_name>
+
+
+3rd way by exposing an api endPoints
+
+note-- when  using TokenAuthenitcation, you may want to provide a mechanism for client to obtain a token  given   the username and password, rest_framework provides you 
+a built-in  view  to provide  this behaviour. to Use it  add the obtain_auth_token view to your URLconf
+
+
+from rest_framework.authtoken.view import obtain_auth_token
+utlpatterns = [
+    path('gettoken/',obtain_auth_token)
+]
+
+it return json response when valid username and password field are POSTed to the view using from data or json
+
+pip install httpie
+
+
+http POST http://127.0.0.1:8000/gettoken/ username=amit password=P@ssrord123
+
+
+to customize the respose of the above url commad for the 3rd way we have to create a saparate file and specify thiere like here i am using auth.py
+
+
+4th By using Signals
+
+
+from django.conf import settings
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from rest_framework.authtoken.models import  Token
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_auth_token(sender,instance=None,created=False,**kwargs):
+    if created:
+        Token.objects.create(user=instance)
+
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+now using the token we can access the api endpoints below as follows 
+
+
+httpie
+
+basic syntex 
+
+http [flags] [method] URL [ITEM[ITEM]]
+
+
+how to use 
+pip install httpie
+
+
+use httpie
+
+
+📌 1️⃣ GET – List all users
+
+
+http http://127.0.0.1:8000/studentapi/ 'Authentication:Token 83bfe03d294a7234db627540c21565dd66975bf8'
+
+http http://127.0.0.1:8000/student/authentication/ \
+Authorization:"Token 83bfe03d294a7234db627540c21565dd66975bf8"
+
+
+📌 2️⃣ GET – Retrieve a single user (by ID)
+
+http GET http://127.0.0.1:8000/student/authentication/1/ \
+Authorization:"Token 83bfe03d294a7234db627540c21565dd66975bf8"
+
+
+📌 3️⃣ POST – Create a new user
+
+http POST http://127.0.0.1:8000/student/authentication/ \
+Authorization:"Token 83bfe03d294a7234db627540c21565dd66975bf8" \
+username="aman" email="john@example.com" password="john@123"
+
+
+📌 4️⃣ PUT – Full update (ALL fields required)
+http PUT http://127.0.0.1:8000/student/authentication/2/ \
+Authorization:"Token 83bfe03d294a7234db627540c21565dd66975bf8" \
+username="john_updated" email="john_updated@example.com"
+
+
+📌 5️⃣ PATCH – Partial update (recommended)
+
+http PATCH http://127.0.0.1:8000/student/authentication/2/ \
+Authorization:"Token 83bfe03d294a7234db627540c21565dd66975bf8" \
+email="newmail@example.com"
+
+
+📌 6️⃣ DELETE – Delete a user
+
+http DELETE http://127.0.0.1:8000/student/authentication/2/ \
+Authorization:"Token 83bfe03d294a7234db627540c21565dd66975bf8"
+
+
+📌 7️⃣ OPTIONS – See allowed methods (very useful)
+http OPTIONS http://127.0.0.1:8000/student/authentication/
+
+
+📌 8️⃣ HEAD – Metadata only
+http HEAD http://127.0.0.1:8000/student/authentication/ \
+Authorization:"Token 83bfe03d294a7234db627540c21565dd66975bf8"
+
+
+why we are using this -- because to test the token authentication there is no facilaty of browsable api so we use command prompt.

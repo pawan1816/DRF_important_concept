@@ -1,0 +1,138 @@
+third party package
+
+Django OAuth Toolkit
+
+json web Token Authentication  (JWT)
+
+Hawk signature Authentication
+
+Http signature Authentication
+
+Djoser
+
+django-rest-auth / dj-rest-auth
+
+django-rest-framework-social-oauth2
+
+django-rest-knox
+
+drfpasswordless
+
+
+we will look only "json web Token Authentication" because it is very popular
+
+
+Simple JWT
+
+pip install djangorestframework-simplejwt
+
+configure simple jwt
+
+
+
+Command 
+
+
+🔐 1️⃣ Obtain JWT token (LOGIN)
+
+👉 This is the main command
+
+http POST http://127.0.0.1:8000/token/ \
+username="pawan" password="P@ssw0rd1647@779!"
+
+
+🔄 2️⃣ Refresh access token
+
+(When access token expires)
+
+http POST http://127.0.0.1:8000/varifyToken/ \
+refresh="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY4NTkyNzQyLCJpYXQiOjE3Njg1OTI0NDIsImp0aSI6ImNjZTJjZjE1OWQ1MDQ5MDA4MzM1MWQwNDFiNjRlNTkzIiwidXNlcl9pZCI6IjIifQ.7K_YPSX59PokK--BcSNAFx2IpFBwM3-Ml43lu38Byio"
+
+
+
+🔍 3️⃣ Verify token (optional but useful)
+http POST http://127.0.0.1:8000/api/token/verify/ \
+token="YOUR_ACCESS_TOKEN"
+
+
+🔐 4️⃣ Access a protected API using JWT
+
+Use ACCESS token only:
+
+http GET http://127.0.0.1:8000/student/authentication/ \
+Authorization:"Bearer YOUR_ACCESS_TOKEN"
+
+
+
+🧩 REQUIRED urls.py (CONFIRM THIS EXISTS)
+from django.urls import path
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView,
+)
+
+urlpatterns = [
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+]
+
+⚙️ REQUIRED settings.py (JWT AUTH)
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+
+
+
+1️⃣ VERIFY TOKEN (ACCESS or REFRESH)
+http POST http://127.0.0.1:8000/varifyToken/ \
+token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY4NTkzNDA3LCJpYXQiOjE3Njg1OTMxMDcsImp0aSI6IjM5NTEyNTU5MTg3NjQxMjViYTkyM2QxMmJkZDNmODQ1IiwidXNlcl9pZCI6IjIifQ.dxieNrm1k876kFMe_nl7hfTc0HDpL0EvkVZVIMIi0yE"
+
+
+✔ Works with access token
+✔ Works with refresh token
+
+2️⃣ REFRESH ACCESS TOKEN (ONLY refresh token)
+http POST http://127.0.0.1:8000/api/token/refresh/ \
+refresh="PASTE_REFRESH_TOKEN_HERE"
+
+
+
+
+
+📌 1️⃣ LIST ALL STUDENTS / USERS
+http GET http://127.0.0.1:8000/student/authentication/ \
+Authorization:"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY4NTk0NTAxLCJpYXQiOjE3Njg1OTQyMDEsImp0aSI6IjJiMTZkM2Q5NjgzNzRkYmViMjM3YjM5ZDgzYTA0ZWE0IiwidXNlcl9pZCI6IjIifQ.tIUy7dZRTYdlLQgJRmD0UBEJ9ePwkRW0tp-eJ4uySq4"
+
+📌 2️⃣ GET SINGLE STUDENT / USER (DETAIL)
+http GET http://127.0.0.1:8000/student/authentication/1/ \
+Authorization:"Bearer YOUR_ACCESS_TOKEN"
+
+
+(Change 1 to any user ID)
+
+📌 3️⃣ CREATE STUDENT / USER (POST)
+http POST http://127.0.0.1:8000/student/authentication/ \
+Authorization:"Bearer YOUR_ACCESS_TOKEN" \
+username="newuser" email="newuser@gmail.com" password="test@123"
+
+📌 4️⃣ UPDATE STUDENT / USER (PUT – full update)
+http PUT http://127.0.0.1:8000/student/authentication/1/ \
+Authorization:"Bearer YOUR_ACCESS_TOKEN" \
+username="updateduser" email="updated@gmail.com"
+
+📌 5️⃣ PARTIAL UPDATE (PATCH – recommended)
+http PATCH http://127.0.0.1:8000/student/authentication/1/ \
+Authorization:"Bearer YOUR_ACCESS_TOKEN" \
+email="changed@gmail.com"
+
+📌 6️⃣ DELETE STUDENT / USER
+http DELETE http://127.0.0.1:8000/student/authentication/1/ \
+Authorization:"Bearer YOUR_ACCESS_TOKEN"
+
+📌 7️⃣ OPTIONS (see allowed methods)
+http OPTIONS http://127.0.0.1:8000/student/authentication/
