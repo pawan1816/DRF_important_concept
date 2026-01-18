@@ -1,0 +1,25 @@
+PageNumberPagination
+LimitOffSetPagination
+CursorPagination
+
+------------------------------------------------------------
+it can be globle or local
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}
+
+----------------------------------------------------------------
+for locally  add this to the views of the any class
+
+
+pagination_class = PageNumberPagination
+
+
+----------------------------------------------------------------
+
+
+PageNumberPagination
+---------------------
